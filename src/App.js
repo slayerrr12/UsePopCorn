@@ -47,19 +47,32 @@ const tempWatchedData = [
   },
 ];
 
-const Nav = (props) => {
+const Logo = () => {
+  return (
+    <div className="logo">
+      <span role="img">🍿</span>
+      <h1>usePopcorn</h1>
+    </div>
+  );
+};
 
+const NumResults = () => {
   const [movies, setMovies] = useState(tempMovieData);
   return (
-    <nav className="nav-bar">
-      <div className="logo">
-        <span role="img">🍿</span>
-        <h1>usePopcorn</h1>
-      </div>
-      <Search />
+    <div>
       <p className="num-results">
         Found <strong>{movies.length}</strong> results
       </p>
+    </div>
+  );
+};
+
+const Nav = (props) => {
+  return (
+    <nav className="nav-bar">
+      <Logo />
+      <Search />
+      <NumResults />
     </nav>
   );
 };
