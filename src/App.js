@@ -107,7 +107,7 @@ export const MovieList = () => {
   return (
     <ul className="list">
       {movies?.map((movie) => (
-        <Movie />
+        <Movie movie={movie} />
       ))}
     </ul>
   );
@@ -148,7 +148,7 @@ const ListBox = () => {
   );
 };
 
-export const WatchedMovies = ({ movie }) => {
+export const WatchedMovie = ({ movie }) => {
   return (
     <li key={movie.imdbID}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
@@ -171,26 +171,10 @@ export const WatchedMovies = ({ movie }) => {
   );
 };
 
-export const WatchedBox = () => {
-  const [watched, setWatched] = useState(tempWatchedData);
 
-  const [isOpen2, setIsOpen2] = useState(true);
-
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
-
+export const MovieSummary = ({watched , avgImdbRating , avgUserRating , avgRuntime}) => {
   return (
-    <div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen2((open) => !open)}
-      >
-        {isOpen2 ? "–" : "+"}
-      </button>
-      {isOpen2 && (
-        <>
-          <div className="summary">
+    <div className="summary">
             <h2>Movies you watched</h2>
             <div>
               <p>
@@ -211,10 +195,35 @@ export const WatchedBox = () => {
               </p>
             </div>
           </div>
+  )
+}
+
+
+
+export const WatchedBox = () => {
+  const [watched, setWatched] = useState(tempWatchedData);
+
+  const [isOpen2, setIsOpen2] = useState(true);
+
+  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
+  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgRuntime = average(watched.map((movie) => movie.runtime));
+
+  return (
+    <div className="box">
+      <button
+        className="btn-toggle"
+        onClick={() => setIsOpen2((open) => !open)}
+      >
+        {isOpen2 ? "–" : "+"}
+      </button>
+      {isOpen2 && (
+        <>
+          <MovieSummary watched={watched} avgImdbRating = {avgImdbRating}   avgUserRating = {avgUserRating} avgRuntime = {avgRuntime}/>
 
           <ul className="list">
             {watched.map((movie) => (
-              <WatchedMovies movie={movie} />
+              <WatchedMovie movie={movie} />
             ))}
           </ul>
         </>
