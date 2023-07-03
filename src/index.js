@@ -10,15 +10,7 @@ const Test = () => {
 
     return (
         <div>
-            the movies is rated {userMovieRating}
-            <StarRating
-                maxRating={"efadwad"}
-                size={30}
-                defaultRating={3}
-                color={"#eab308"}
-                starMessages={["Awful", "Meh", "Decent", "Great", "Awesome"]}
-                setuserMovieRating={setuserMovieRating}
-            />
+            
         </div>
     );
 };
