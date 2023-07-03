@@ -56,24 +56,13 @@ const Logo = () => {
   );
 };
 
-const NumResults = () => {
-  const [movies, setMovies] = useState(tempMovieData);
+const NumResults = ({ movies }) => {
   return (
     <div>
       <p className="num-results">
         Found <strong>{movies.length}</strong> results
       </p>
     </div>
-  );
-};
-
-const Nav = (props) => {
-  return (
-    <nav className="nav-bar">
-      <Logo />
-      <Search />
-      <NumResults />
-    </nav>
   );
 };
 
@@ -92,18 +81,16 @@ const Search = () => {
   );
 };
 
-const Main = () => {
+const Main = ({ children }) => {
   return (
     <main className="main">
-      <ListBox />
-
-      <WatchedBox />
+      {children}
     </main>
   );
 };
 
-export const MovieList = () => {
-  const [movies, setMovies] = useState(tempMovieData);
+export const MovieList = ({movies}) => {
+
   return (
     <ul className="list">
       {movies?.map((movie) => (
@@ -135,20 +122,30 @@ const ListBox = () => {
 
   return (
     <div>
+
       <div className="box">
-        <button
-          className="btn-toggle"
-          onClick={() => setIsOpen1((open) => !open)}
-        >
-          {isOpen1 ? "–" : "+"}
-        </button>
-        {isOpen1 && <MovieList />}
+
+        <div>
+          <button
+            className="toggle-btn"
+            onClick={() => setIsOpen1((open) => !open)}
+          >
+            {isOpen1 ? "COLLAPSE" : "EXPAND"}
+          </button>
+        </div>
+
+
+        {isOpen1 && (
+          <>
+            <MovieList />
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-export const WatchedMovie = ({ movie }) => {
+export const WatchedMovieList = ({ movie }) => {
   return (
     <li key={movie.imdbID}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
@@ -171,34 +168,36 @@ export const WatchedMovie = ({ movie }) => {
   );
 };
 
-
-export const MovieSummary = ({watched , avgImdbRating , avgUserRating , avgRuntime}) => {
+export const MovieSummary = ({
+  watched,
+  avgImdbRating,
+  avgUserRating,
+  avgRuntime,
+}) => {
   return (
     <div className="summary">
-            <h2>Movies you watched</h2>
-            <div>
-              <p>
-                <span>#️⃣</span>
-                <span>{watched.length} movies</span>
-              </p>
-              <p>
-                <span>⭐️</span>
-                <span>{avgImdbRating}</span>
-              </p>
-              <p>
-                <span>🌟</span>
-                <span>{avgUserRating}</span>
-              </p>
-              <p>
-                <span>⏳</span>
-                <span>{avgRuntime} min</span>
-              </p>
-            </div>
-          </div>
-  )
-}
-
-
+      <h2>Movies you watched</h2>
+      <div>
+        <p>
+          <span>#️⃣</span>
+          <span>{watched.length} movies</span>
+        </p>
+        <p>
+          <span>⭐️</span>
+          <span>{avgImdbRating}</span>
+        </p>
+        <p>
+          <span>🌟</span>
+          <span>{avgUserRating}</span>
+        </p>
+        <p>
+          <span>⏳</span>
+          <span>{avgRuntime} min</span>
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export const WatchedBox = () => {
   const [watched, setWatched] = useState(tempWatchedData);
@@ -215,15 +214,21 @@ export const WatchedBox = () => {
         className="btn-toggle"
         onClick={() => setIsOpen2((open) => !open)}
       >
-        {isOpen2 ? "–" : "+"}
+        {isOpen2 ? "COLLAPSE" : "EXPAND"}
       </button>
+
       {isOpen2 && (
         <>
-          <MovieSummary watched={watched} avgImdbRating = {avgImdbRating}   avgUserRating = {avgUserRating} avgRuntime = {avgRuntime}/>
+          <MovieSummary
+            watched={watched}
+            avgImdbRating={avgImdbRating}
+            avgUserRating={avgUserRating}
+            avgRuntime={avgRuntime}
+          />
 
           <ul className="list">
             {watched.map((movie) => (
-              <WatchedMovie movie={movie} />
+              <WatchedMovieList movie={movie} />
             ))}
           </ul>
         </>
@@ -231,15 +236,27 @@ export const WatchedBox = () => {
     </div>
   );
 };
+const Nav = ({ children }) => {
+  return <nav className="nav-bar">{children}</nav>;
+};
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
+  const [movies, setMovies] = useState(tempMovieData);
   return (
     <>
-      <Nav />
-      <Main />
+      <Nav>
+        <Logo />
+        <Search />
+        <NumResults movies={movies} />
+      </Nav>
+      <Main>
+        <ListBox movie = {movies}/>
+
+        <WatchedBox />
+      </Main>
     </>
   );
 }
