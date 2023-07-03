@@ -8,6 +8,7 @@ root.render(
     <StarRating
       maxRating={5}
       size={30}
+      defaultRating = {3}
       color={"#eab308"}
       starMessages={["Awful", "Meh", "Decent", "Great", "Awesome"]}
     />

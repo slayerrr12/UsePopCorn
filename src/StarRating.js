@@ -19,6 +19,7 @@ const StarContainerStyle = {
 };
 
 export const StarRating = ({
+    defaultRating = 3,
     maxRating = 5,
     size = 50,
     color = "#fcc419",
@@ -30,7 +31,7 @@ export const StarRating = ({
         color,
         fontSize: `${size / 1.5}px`,
     };
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(defaultRating);
 
     const rateChangeHandler = (rating) => {
         setRating(rating);
