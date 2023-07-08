@@ -33,32 +33,39 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [error, setError] = useState(false)
   const onChangeQuery = (e) => {
     e.preventDefault();
     const queryValue = e.target.value;
     setQuery(queryValue);
   };
 
+
+
+
+
   //side effect code
   useEffect(() => {
-    
     async function fetchMoviesData() {
+      setError(false)
       setLoading(true);
+      try {
         const res = await fetch(
-          `http://www.omdbapi.com/?s=${query.trim().replace(/\s+/g, " ")}&apikey=a8902e28`
+          `http://www.omdbapi.com/?s=${query
+            .trim()
+            .replace(/\s+/g, " ")}&apikey=a8902e28`
         );
 
         const data = await res.json();
         console.log("data from api:", data);
-        
+
         setMovies(data.Search);
         setLoading(false);
-      
-        
+      } catch (error) {
+        setError(error.message);
       }
-      fetchMoviesData()
-      
-    
+    }
+    fetchMoviesData();
   }, [query]);
 
   return (
@@ -70,7 +77,8 @@ export default function App() {
 
       <Main>
         <Box>
-          {loading ? <LoadingSpinner /> : <MovieList movies={movies} />}
+          {error && <Error />}
+          {!error&&(loading ? <LoadingSpinner/> : <MovieList movies={ movies}/>)}
         </Box>
 
         <Box>
@@ -81,6 +89,18 @@ export default function App() {
     </>
   );
 }
+
+
+function Error({ errorMessage }) {
+
+  return (
+    <p>
+      Oops! Something went wrong...{errorMessage ? `: ${errorMessage}` : ""}.
+    </p>
+  )
+
+}
+
 
 function LoadingSpinner() {
   console.log("loading");
@@ -110,7 +130,6 @@ function Logo() {
 }
 
 function Search({ onChangeQuery, query }) {
- 
   return (
     <input
       className="search"
