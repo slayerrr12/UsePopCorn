@@ -31,8 +31,56 @@ const average = (arr) =>
 
 
 
-const SelectedMovieId = ({ movieId }) => {
-  console.log("movie")
+const SelectedMovieCard = ({ movieId }) => {
+  const [title, setTitle] = useState(null)
+  const [rating, setRating] = useState(null)
+  const [plot, setPlot] = useState(null)
+  const [poster, setPoster] = useState(null)
+
+
+
+
+
+  useEffect(() => {
+    async function fetchMoviesData() {
+
+      if (movieId === '') {
+        return
+      }
+
+
+      try {
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=a8902e28&i=${movieId}`
+        );
+
+        const data = await res.json();
+        const { Plot, Title, Ratings, Poster } = data;
+
+        setTitle(`The Movie title: ${Title}`)
+        setPoster(Poster)
+        setRating(Ratings[0].Value)
+        setPlot(`${Plot}`)
+
+
+
+
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+    fetchMoviesData();
+  }, [movieId]);
+
+
+
+
+
+
+
+
+
+
   return (
     <div >{movieId} is the id </div>
   )
@@ -46,7 +94,7 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedMovieId, setSelectedMovieId] = useState(true);
+  const [selectedMovieId, setSelectedMovieId] = useState(`tt6468322`);
   const [watched, setWatched] = useState(tempWatchedData);
   const [error, setError] = useState(false);
   const onChangeQuery = (e) => {
@@ -59,6 +107,11 @@ export default function App() {
   //side effect code
   useEffect(() => {
     async function fetchMoviesData() {
+
+      if (query === '') {
+        return
+      }
+
       setError(false);
       setLoading(true);
       try {
@@ -69,7 +122,7 @@ export default function App() {
         );
 
         const data = await res.json();
-        console.log("data from api:", data);
+        console.log("data fetch from api was successfull");
 
         setMovies(data.Search);
         setLoading(false);
@@ -97,7 +150,7 @@ export default function App() {
         <Box>
           {!(selectedMovieId) ? <span><WatchedSummary watched={watched} />
             <WatchedMoviesList watched={watched} />
-          </span> : <SelectedMovieId movieId = {selectedMovieId}/>}
+          </span> : <SelectedMovieCard movieId={selectedMovieId} />}
         </Box>
 
       </Main>
