@@ -28,26 +28,38 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+
+
+
+const SelectedMovieId = ({ movieId }) => {
+  console.log("movie")
+  return (
+    <div >{movieId} is the id </div>
+  )
+}
+
+
+
+
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedMovieId, setSelectedMovieId] = useState(true);
   const [watched, setWatched] = useState(tempWatchedData);
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false);
   const onChangeQuery = (e) => {
     e.preventDefault();
+
     const queryValue = e.target.value;
     setQuery(queryValue);
   };
 
-
-
-
-
   //side effect code
   useEffect(() => {
     async function fetchMoviesData() {
-      setError(false)
+      setError(false);
       setLoading(true);
       try {
         const res = await fetch(
@@ -78,29 +90,28 @@ export default function App() {
       <Main>
         <Box>
           {error && <Error />}
-          {!error&&(loading ? <LoadingSpinner/> : <MovieList movies={ movies}/>)}
+          {!error &&
+            (loading ? <LoadingSpinner /> : <MovieList movies={movies} />)}
         </Box>
 
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMoviesList watched={watched} />
+          {!(selectedMovieId) ? <span><WatchedSummary watched={watched} />
+            <WatchedMoviesList watched={watched} />
+          </span> : <SelectedMovieId movieId = {selectedMovieId}/>}
         </Box>
+
       </Main>
     </>
   );
 }
 
-
 function Error({ errorMessage }) {
-
   return (
     <p>
       Oops! Something went wrong...{errorMessage ? `: ${errorMessage}` : ""}.
     </p>
-  )
-
+  );
 }
-
 
 function LoadingSpinner() {
   console.log("loading");
