@@ -12,13 +12,13 @@ const StarContainerStyle = {
     gap: "4px",
 };
 
-export const StarRating = ({
+ const StarRating = ({
     defaultRating = 3,
     maxRating = 5,
     size = 50,
     color = "#fcc419",
     starMessages = ["Awful", "Meh", "Decent", "Great", "Awesome"],
-    setuserMovieRating,
+    setUserMovieRating,
 }) => {
     const textStyle = {
         lineHeight: "1",
@@ -42,7 +42,7 @@ export const StarRating = ({
                         key={i}
                         rateChangeHandler={() => {
                             rateChangeHandler(i + 1);
-                            setuserMovieRating(i + 1);
+                            setUserMovieRating(i + 1);
                             console.log("userRating changed");
                         }}
                         full={rating - 1 >= i}
@@ -94,4 +94,7 @@ const Star = ({ rateChangeHandler, full, color, size }) => {
         </span>
     );
 };
+
+
+export default StarRating;
 

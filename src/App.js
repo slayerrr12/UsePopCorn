@@ -1,6 +1,20 @@
 import "./index.css";
+import StarRating from "./StarRating";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
+
+const imageStyle = {
+  padding: '10px',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+  transition: 'box-shadow 0.3s ease-in-out'
+};
+
+const styleObj = {
+  fontSize: 14,
+  color: "#4a54f1",
+  textAlign: "center",
+  paddingTop: "10px",
+}
 
 const tempWatchedData = [
   {
@@ -28,26 +42,19 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const SelectedMovieCard = ({ movieId , setUserRating ,setSelectedMovieId}) => {
 
-
-
-const SelectedMovieCard = ({ movieId }) => {
-  const [title, setTitle] = useState(null)
-  const [rating, setRating] = useState(null)
-  const [plot, setPlot] = useState(null)
-  const [poster, setPoster] = useState(null)
-
-
-
-
+  const [title, setTitle] = useState(null);
+  const [rating, setRating] = useState(null);
+  const [plot, setPlot] = useState(null);
+  const [poster, setPoster] = useState(null);
+  const [starring, setStarring] = useState(null)
 
   useEffect(() => {
     async function fetchMoviesData() {
-
-      if (movieId === '') {
-        return
+      if (movieId === "") {
+        return;
       }
-
 
       try {
         const res = await fetch(
@@ -55,46 +62,68 @@ const SelectedMovieCard = ({ movieId }) => {
         );
 
         const data = await res.json();
-        const { Plot, Title, Ratings, Poster } = data;
-
-        setTitle(`The Movie title: ${Title}`)
-        setPoster(Poster)
-        setRating(Ratings[0].Value)
-        setPlot(`${Plot}`)
-
-
-
-
+        const { Plot, Title, Ratings, Poster, Actors } = data;
+        console.log(data)
+        setTitle(` ${Title}`);
+        setPoster(Poster);
+        setRating(Ratings[0].Value);
+        setPlot(`${Plot}`);
+        setStarring(Actors)
       } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
       }
     }
     fetchMoviesData();
   }, [movieId]);
 
-
-
-
-
-
-
-
-
-
   return (
-    <div >{movieId} is the id </div>
-  )
-}
+    <div>
 
+      
+      <div className="details-overview">
+        <header >
+        <img src={poster} style={imageStyle} alt="movie poster" />
+          <h2>{title}</h2>
 
+          <span style={{ color: "orange", fontWeight: 700 }}>
+            {" "}
+            ⭐ {rating} IMDb rating{" "}
+          </span>
+        </header>
+        <StarRating setUserMovieRating = {setUserRating}/>
+        <section>
+          <p>
+            {plot}
+          </p>
+          <p style={
+            styleObj
+          }>
+            Starring :
 
+          </p>
+          <p>
+            {starring}
+          </p>
+        </section>
 
+      <button onClick={(e)=>{
+        e.preventDefault();
+        setSelectedMovieId(null)
+      }} className="back-button">
+         Back
+      </button>
+      </div>
+
+    </div>
+  );
+};
 
 export default function App() {
+  const [userRating, setUserRating] = useState(null)
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedMovieId, setSelectedMovieId] = useState(`tt6468322`);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [watched, setWatched] = useState(tempWatchedData);
   const [error, setError] = useState(false);
   const onChangeQuery = (e) => {
@@ -107,9 +136,8 @@ export default function App() {
   //side effect code
   useEffect(() => {
     async function fetchMoviesData() {
-
-      if (query === '') {
-        return
+      if (query === "") {
+        return;
       }
 
       setError(false);
@@ -144,15 +172,19 @@ export default function App() {
         <Box>
           {error && <Error />}
           {!error &&
-            (loading ? <LoadingSpinner /> : <MovieList movies={movies} />)}
+            (loading ? <LoadingSpinner /> : <MovieList movies={movies} setMovieSelectHandler = {setSelectedMovieId} />)}
         </Box>
 
         <Box>
-          {!(selectedMovieId) ? <span><WatchedSummary watched={watched} />
-            <WatchedMoviesList watched={watched} />
-          </span> : <SelectedMovieCard movieId={selectedMovieId} />}
+          {!selectedMovieId ? (
+            <span>
+              <WatchedSummary watched={watched} />
+              <WatchedMoviesList watched={watched} />
+            </span>
+          ) : (
+          <SelectedMovieCard setUserRating = {setUserRating} movieId={selectedMovieId} setSelectedMovieId = {setSelectedMovieId}/>
+          )}
         </Box>
-
       </Main>
     </>
   );
@@ -235,19 +267,24 @@ function Box({ children }) {
   );
 }
 
-function MovieList({ movies }) {
+function MovieList({ movies , setMovieSelectHandler }) {
+
   return (
     <ul className="list">
       {movies?.map((movie) => (
-        <Movie movie={movie} key={movie.imdbID} />
+        <Movie movie={movie} key={movie.imdbID}  setMovieSelectHandler = {setMovieSelectHandler}/>
       ))}
     </ul>
   );
 }
 
-function Movie({ movie }) {
+function Movie({ movie , setMovieSelectHandler }) {
   return (
-    <li>
+    <li  onClick={(e)=>{
+      const {imdbID} = movie
+      e.preventDefault()
+      setMovieSelectHandler(imdbID)
+    }}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
